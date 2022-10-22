@@ -1,0 +1,199 @@
+#
+# wm independent hotkeys
+#
+
+
+# make sxhkd reload its configuration files:
+super + Escape
+	pkill -USR1 -x sxhkd
+
+#
+# bspwm hotkeys
+#
+
+# 重启bspwm
+super + alt + {q,r}
+	bspc {quit,wm -r}
+
+# 关闭窗口
+super + {_,shift + }w
+	bspc node -{c,k}
+
+super + {_,shift + }q
+	bspc node -{c,k}
+
+# 在平铺和单窗口之间切换
+super + m
+	bspc desktop -l next
+
+# 将标记的节点窗口移动到预选择的窗口上
+super + y
+	bspc node newest.marked.local -n newest.!automatic.local
+
+# 切换到当前视图节点最大的窗口
+super + g
+	bspc node -s biggest.window
+
+#
+# state/flags
+#
+
+# 切换平铺/居中平铺/悬浮/窗口最大化状态
+super + {t,shift + t,s,f}
+	bspc node -t {tiled,pseudo_tiled,floating,fullscreen}
+
+# 节点标记/锁定/便签/私有
+super + ctrl + {m,x,y,z}
+	bspc node -g {marked,locked,sticky,private}
+
+#
+# focus/swap
+#
+
+# 移动节点焦点
+super + {_,shift + }{h,j,k,l}
+	bspc node -{f,s} {west,south,north,east}
+
+# 选择父类节点，兄弟节点
+super + {p,b,comma,period}
+	bspc node -f @{parent,brother,first,second}
+
+# 前后节点切换
+super + {_,shift + }c
+    bspc node -{c,k}
+
+# 前后桌面切换
+super + bracket{left,right}
+	bspc desktop -f {prev,next}.local
+
+# 切换上次切点/窗口
+super + {grave,Tab}
+	bspc {node,desktop} -f last
+
+# 切换最老/最新的节点
+super + {o,i}
+	bspc wm -h off; \
+	bspc node {older,newer} -f; \
+	bspc wm -h on
+
+# 切换窗口
+super + {_,shift + }{1-9,0}
+	bspc {desktop -f,node -d} '^{1-9,10}'
+
+#
+# preselect
+#
+
+# preselect the direction
+super + ctrl + {h,j,k,l}
+	bspc node -p {west,south,north,east}
+
+# preselect the ratio
+super + ctrl + {1-9}
+	bspc node -o 0.{1-9}
+
+# cancel the preselection for the focused node
+super + ctrl + space
+	bspc node -p cancel
+
+# cancel the preselection for the focused desktop
+super + ctrl + shift + space
+	bspc query -N -d | xargs -I id -n 1 bspc node id -p cancel
+
+#
+# move/resize
+#
+
+# expand a window by moving one of its side outward
+super + alt + {h,j,k,l}
+    bspc node -z {right -20 0,top 0 20,bottom 0 -20,left 20 0}
+
+##新增
+super + ctrl + {Left,Down,Up,Right}
+    bspc node -z {left -20 0,bottom 0 20,top 0 -20,right 20 0}
+
+# contract a window by moving one of its side inward
+super + alt + shift + {h,j,k,l}
+	bspc node -z {right -20 0,top 0 20,bottom 0 -20,left 20 0}
+
+# move a floating window
+super + {Left,Down,Up,Right}
+	bspc node -v {-20 0,0 20,0 -20,20 0}
+
+## 旋转
+super + {_,shift + }r
+    bspc node @parent -R {180,90}
+
+## 焦点转移
+super + a
+        if [ "$(bspc query -N -n focused.floating)" ]; then \
+                bspc node -f last.tiled.local; \
+        else \
+                bspc node -f last.floating.local; \
+        fi 
+
+##隐藏窗口
+super + v
+    bspc node -g hidden
+
+super + ctrl + v
+    bspc node {,$(bspc query -N -n .hidden | tail -n1)} -g hidden=off
+
+F3
+    bspc node -g hidden
+
+F4
+    bspc node {,$(bspc query -N -n .hidden | tail -n1)} -g hidden=off
+# 打开终端
+F1
+	kitty
+
+super + Return
+    kitty
+
+# 搜索菜单
+F2
+    ~/.config/rofi/launchers/type-4/launcher.sh
+
+F9
+    google-chrome-beta
+
+F10
+    firefox
+
+F11
+    flameshot gui
+
+Print
+    flameshot gui
+
+F12
+    feh --bg-fill --randomize ~/wallpaper/* 
+
+super + {x,z}
+    bspc node -f {next,prev}.local.!hidden.window
+
+Pause
+    /home/arch/.config/polybar/launch.sh --colorblocks &
+
+ctrl + 1
+    bsp-layout set tall
+
+ctrl + shift + 1
+    bsp-layout set rtall
+
+ctrl + 2
+    bsp-layout set wide
+
+ctrl + shift + 2
+    bsp-layout set rwide
+
+ctrl + 3
+    bsp-layout set tiled
+
+ctrl + shift + 3
+    bsp-layout set monocle
+
+
+
+
